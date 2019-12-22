@@ -1,4 +1,35 @@
 body {
-    margin: 0;
+    margin: 20px;
     font-family: sans-serif;
+}
+
+div {
+    display: block;
+    margin: auto;
+    width: 70%;
+    text-align: center;
+}
+
+table {
+    background-color: aquamarine;
+    margin: auto;
+    width: 70%;
+}
+
+tr, th, td {
+    text-align: center;
+    margin: 30px;
+    padding: 5px;
+}
+
+th {
+    color: brown;
+}
+
+#addtask{
+    margin-top: 10px;
+}
+
+#content {
+    width: 70%;
 }
