@@ -8,6 +8,7 @@ db = SQLAlchemy(app)
 
 class Todo(db.Model):
     __tablename__ = "todo"
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Integer, default=0)
@@ -60,7 +61,11 @@ def update(id):
     else:
         return render_template('update.html', task=task)
 
-if __name__ == "__main__":
-    db.drop_all()
+@app.before_first_request
+def create_tables():
     db.create_all()
+
+if __name__ == "__main__":
+    # db.drop_all()
+    # db.create_all()
     app.run(debug=True)
