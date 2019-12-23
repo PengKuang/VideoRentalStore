@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Rentals</title>
+{% endblock%}
+
+{% block body %}
+<div class="content">
+    <h1>Rental records</h1>
+    {% if tasks|length < 1 %}
+    <h4>No film has been rented out yet!</h4>
+    <br>
+    
+    {% else %}
+    <table>
+        <tr>
+            <th>Rental ID</th>
+            <th>Customer ID</th>
+            <th>Film</th>
+            <th>Start Date</th>
+            <th>End Date<th>
+        </tr>
+
+        {% for task in tasks%}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.cust_id }}</td>
+                <td>{{ task.film_name }}</td>
+                <td>{{ task.start_date }}</td>
+                <td>{{ task.end_date }}</td>
+                <!-- <td>
+                    <a href="/update/{{task.id}}">Returned</a>
+                </td> -->
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    
+    <br>
+    <a href='/'>Go back to the film catalog</a>
+</div>
+{% endblock%}

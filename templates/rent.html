@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>rent films</title>
+{% endblock%}
+
+{% block body %}
+<div class="content">
+    <h1>Rent a film</h1>
+
+    <div class="form">
+        <form action="/rent/{{task.id}}" method="POST">
+            <!-- <input type="text" name="rentid" id="rent_id" value=""/> -->
+            <!-- <input type="text" name="filmid" id="filmid" value="{{task.id}}"/> -->
+            <input type="text" name="filmname" id="film_name" value="{{task.content}}"/>
+            <input type="number" name="customerid" id="cust_id" value="customer id"/>
+            <input type="date" name="startdate" id="start_date"/>
+            <input type="date" name="enddate" id="end_date"/>
+            <input type="submit" value="Rent">
+        </form>
+    </div>
+</div>
+{% endblock%}
