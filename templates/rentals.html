@@ -6,37 +6,43 @@
 
 {% block content %}
 <div class="container">
-    <h1>Rental records</h1>
+    <h2>Rental records</h2>
+    <hr/>
     {% if tasks|length < 1 %}
     <h4>No film has been rented out yet!</h4>
     <br>
     
     {% else %}
-    <table>
-        <tr>
-            <th>Rental ID</th>
-            <th>Customer ID</th>
-            <th>Film</th>
-            <th>Start Date</th>
-            <th>End Date<th>
-        </tr>
-
-        {% for task in tasks%}
-            <tr>
-                <td>{{ task.id }}</td>
-                <td>{{ task.cust_id }}</td>
-                <td>{{ task.film_name }}</td>
-                <td>{{ task.start_date }}</td>
-                <td>{{ task.end_date }}</td>
-                <!-- <td>
-                    <a href="/update/{{task.id}}">Returned</a>
-                </td> -->
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr class="bg-warning">
+                <th>Rental ID</th>
+                <th>Customer ID</th>
+                <th>Film</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Price ($SEK)</th>
+                <th>Action</th>
             </tr>
-        {% endfor %}
+        </thead>
+
+        <tbody>
+            {% for task in tasks%}
+                <tr>
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.cust_id }}</td>
+                    <td>{{ task.film_name }}</td>
+                    <td>{{ task.start_date }}</td>
+                    <td>{{ task.end_date }}</td>
+                    <td>30</td>
+                    <td>
+                        <a href="/return/{{task.id}}">Return</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
     {% endif %}
-    
     <br>
-    <a href='/'>Go back to the film catalog</a>
 </div>
 {% endblock%}
