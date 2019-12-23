@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block head %}
+{% block title %}
 <title>Customer list</title>
 {% endblock%}
 
-{% block body %}
-<div class="content">
+{% block content %}
+<div class="container">
     <h1>Customer List</h1>
     {% if tasks|length < 1 %}
     <h4>Please add some customers first </h4>

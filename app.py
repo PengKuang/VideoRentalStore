@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import render_template, url_for, request, redirect
-# from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 # from flask_validator import ValidateInteger, ValidateString, ValidateEmail
@@ -8,7 +7,6 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['SQLACHEMY_DATABASE_URI'] = 'sqlite:///video.db'
 db = SQLAlchemy(app)
-# Bootstrap(app)
 
 class Film(db.Model):
     __tablename__ = "film"

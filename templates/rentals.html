@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block head %}
+{% block title %}
 <title>Rentals</title>
 {% endblock%}
 
-{% block body %}
-<div class="content">
+{% block content %}
+<div class="container">
     <h1>Rental records</h1>
     {% if tasks|length < 1 %}
     <h4>No film has been rented out yet!</h4>
