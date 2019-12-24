@@ -8,7 +8,7 @@
 <div class="container">
     <h2>Customer List</h2>
     <hr/>
-    {% if tasks|length < 1 %}
+    {% if customers|length < 1 %}
     <h4>Please add some customers first </h4>
     
     {% else %}
@@ -24,13 +24,13 @@
         </thead>
 
         <tbody>
-            {% for task in tasks%}
+            {% for customer in customers%}
                 <tr>
-                    <td>{{ task.id }}</td>
-                    <td>{{ task.email }}</td>
-                    <td>{{ task.first_name }}</td>
-                    <td>{{ task.last_name }}</td>
-                    <td>{{ task.bonus_points }}</td>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.first_name }}</td>
+                    <td>{{ customer.last_name }}</td>
+                    <td>{{ customer.bonus_points }}</td>
                 </tr>
             {% endfor %}
         </tbody>
