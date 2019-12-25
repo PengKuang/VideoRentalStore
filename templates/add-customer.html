@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Add a customer</title>
+{% endblock%}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form method="POST" action="/customers/add">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Add a Customer</legend>
+                    <div class="form-group">
+                        {{ form.first_name.label(class="form-control-label") }}
+
+                        {% if form.first_name.errors %}
+                            {{ form.first_name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.first_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.first_name(class="form-control form-control-lg", placeholder="Peng") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.last_name.label(class="form-control-label") }}
+
+                        {% if form.last_name.errors %}
+                            {{ form.last_name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.last_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.last_name(class="form-control form-control-lg", placeholder="Kuang") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control form-control-lg", placeholder="example@somewebsite.edu.ch") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-info") }}
+                </div>
+            </form>
+        </div>
+</div>
+{% endblock%}

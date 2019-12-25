@@ -7,7 +7,6 @@
 {% block content %}
 <div class="container">
     <h1>Rent a film</h1>
-
     <div class="form">
         <form action="/rent/{{film.id}}" method="POST">
             <!-- <input type="text" name="rentid" id="rent_id" value=""/> -->
@@ -17,6 +16,25 @@
             <input type="date" name="startdate" id="start_date"/>
             <input type="date" name="enddate" id="end_date"/>
             <input type="submit" value="Rent">
+        </form>
+
+        <hr>
+        <form action="/rent/{{film.id}}" method="POST" >
+            <div class="form-group">
+                <label for="film_name">Film name</label>
+                <input type="text" class="form-control" name="fname" id="film_name" value="{{film.name}}">
+            </div>
+            <div class="input-group date" date-provide="datepicker">
+                <label for="start_date">Start date </label>
+                <input type="date" class="form-control" name="sdate" id="start_date" value="{{film.date_added.date()}}">
+            </div>
+            <div class="input-group date" date-provide="datepicker">
+                <label for="End_date">end date </label>
+                <input type="date" class="form-control" name="edate" id="end_date" value="25-12-2019">
+            </div>
+            
+            <br/>
+            <input class="btn btn-primary" type="submit" value="Rent">
         </form>
     </div>
 </div>

@@ -17,10 +17,10 @@
         <thead class="table-dark">
             <tr class="bg-warning">
                 <th>Rental ID</th>
-                <th>Customer ID</th>
+                <th>Customer</th>
                 <th>Film</th>
                 <th>Start Date</th>
-                <th>End Date</th>
+                <th>Due Date</th>
                 <th>Price ($SEK)</th>
                 <th>Action</th>
             </tr>
@@ -30,19 +30,19 @@
             {% for rental in rentals%}
                 <tr>
                     <td>{{ rental.id }}</td>
-                    <td>{{ rental.cust_id }}</td>
+                    <td>{{ rental.cust_email }}</td>
                     <td>{{ rental.film_name }}</td>
-                    <td>{{ rental.start_date }}</td>
-                    <td>{{ rental.end_date }}</td>
-                    <td>30</td>
+                    <td>{{ rental.start_date.date() }}</td>
+                    <td>{{ rental.end_date.date() }}</td>
+                    <td>{{ rental.price }}</td>
                     <td>
-                        <a href="/return/{{rental.id}}">Return</a>
+                        <a class="btn btn-outline-primary" href="/return/{{rental.id}}">Return</a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     {% endif %}
-    <br>
+    <hr>
 </div>
 {% endblock%}

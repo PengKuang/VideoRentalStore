@@ -3,7 +3,14 @@
 
 {% block content %}
 <div class="container">
-    <h2>Film Catalog</h2>
+    <div class="row align-items-center">
+        <div class="col-8">
+            <h2>Film Catalog</h2>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-outline-primary" href="/films/add">Add a film</a>
+        </div>
+    </div>
     <hr/>
     {% if films|length < 1 %}
     <h4>Please add some films first </h4>
@@ -15,8 +22,8 @@
                 <th>Film Name</th>
                 <th>Category</th>
                 <th>Added</th>
-                <th>Rented</th>
-                <th>Operation</th>
+                <th>Available</th>
+                <th>Operations</th>
             </tr>
         </thead>
         <tbody>
@@ -25,17 +32,20 @@
                     <td>{{ film.name }}</td>
                     <td>{{ film.category }}</td>
                     <td>{{ film.date_added.date() }}</td>
-                    <td>{{ "Y" if film.available else "N" }}</td>
+                    <td>{{ "Yes" if film.available else "No" }}</td>
                     <td>
                         <div class="row align-items-center">
                             <div class="col-2">
-                                <a class="btn btn-warning" href="/rent/{{film.id}}">Rent</a>
+                                <a class="btn btn-outline-warning" href="/rent/{{film.id}}">Rent</a>
                             </div>
                             <div class="col-2">
-                                <a class="btn btn-primary" href="/update/{{film.id}}">Update</a>
+                                <a class="btn btn-outline-warning" href="/rentals/add/{{film.id}}">new rent</a>
                             </div>
                             <div class="col-2">
-                                <a class="btn btn-danger" href="/delete/{{film.id}}">Delete</a>
+                                <a class="btn btn-outline-primary" href="/update/{{film.id}}">Update</a>
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-outline-danger" href="/delete/{{film.id}}">Delete</a>
                             </div>
                         </div>
                     </td>
@@ -44,13 +54,29 @@
         </tbody>
     </table>
     {% endif %}
-    
-    <div id="addfilm">
-        <form action="/" method="POST" >
-            <input type="text" name="fname" id="fname"/>
-            <input type="submit" value="Add">
-        </form>
+    <hr/>
+    <br/>
+    <div class="row justify-content-center">
+        <div id="addfilmform" class="col-6">
+            <h4>Add a film</h4>
+            <form action="/" method="POST" >
+                <div class="form-group">
+                    <label for="film_name">Film name</label>
+                    <input type="text" class="form-control" name="fname" id="film_name" placeholder="e.g. Frozen II">
+                </div>
+                <div>
+                    <label for="categoryInput">Category</label>
+                    <select class="custom-select" name="fcategory" id="categoryInput">
+                        <option selected value="new release">New release</option>
+                        <option value="regular film">Regular film</option>
+                        <option value="old film">Old film</option>
+                    </select>
+                </div>
+                <br/>
+                <input class="btn btn-primary" type="submit" value="Add">
+            </form>
+        </div>
     </div>
-    <br>
+    <br/>
 </div>
 {% endblock %}

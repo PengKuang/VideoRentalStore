@@ -1,9 +1,11 @@
 from flask import Flask
-from flask import render_template, url_for, request, redirect
+from flask import render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from forms import CustomerForm, RentalForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '229b845d2e364ca8a032e35c104f69b1'
 app.config['SQLACHEMY_DATABASE_URI'] = 'sqlite:///video.db'
 # db.init_app(app)
 db = SQLAlchemy(app)
@@ -14,8 +16,9 @@ class Film(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     category = db.Column(db.String(20))
-    available = db.Column(db.Integer, default=0)
+    available = db.Column(db.Integer, default=1)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    rentals = db.relationship('Rental', backref="film", lazy=True)
 
     def __repr__(self):
         return '<Film %r>' % self.name
@@ -24,11 +27,13 @@ class Rental(db.Model):
     __tablename__ = "rental"
 
     id = db.Column(db.Integer, primary_key=True)
-    # film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
-    cust_id = db.Column(db.Integer)
-    film_name = db.Column(db.String(200))
-    start_date = db.Column(db.String(200))
-    end_date = db.Column(db.String(200))
+    film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
+    film_name = db.Column(db.String(100))
+    cust_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    cust_email = db.Column(db.String(120))
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime, default=datetime.utcnow)
+    price = db.Column(db.Integer, default=30)
 
     def __repr__(self):
         return '<Rental %r>' % self.id
@@ -36,11 +41,12 @@ class Rental(db.Model):
 class Customer(db.Model):
     __tablename__ = "customer"
 
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100))
-    first_name = db.Column(db.String(200))
-    last_name = db.Column(db.String(200))
-    bonus_points = db.Column(db.Integer, default=0)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    bonus_points = db.Column(db.Integer, nullable=False, default=0)
+    rentals = db.relationship('Rental', backref='customer', lazy=True)
 
     def __repr__(self):
         return '<Customer %r>' % self.id
@@ -49,7 +55,8 @@ class Customer(db.Model):
 def index():
     if request.method == 'POST':
         film_name = request.form['fname']
-        new_film = Film(name=film_name)
+        film_category = request.form['fcategory']
+        new_film = Film(name=film_name, category=film_category)
 
         try:
             db.session.add(new_film)
@@ -115,6 +122,45 @@ def get_all_rentals():
     rentals = Rental.query.order_by(Rental.end_date).all()
     return render_template('rentals.html', rentals=rentals)
 
+@app.route("/rentals/add/<int:id>", methods=['GET', 'POST'])
+def add_rental(id):
+    film = Film.query.get_or_404(id)
+    form = RentalForm()
+    form.film_name.data = film.name
+
+    if request.method == 'POST':
+        if form.validate_on_submit:
+            cust_email=form.cust_email.data
+            customer = Customer.query.filter_by(email=cust_email).first()
+    
+            if customer:
+                new_rental = Rental(film_id=film.id,
+                                film_name=film.name,
+                                cust_id=customer.id,
+                                cust_email=customer.email) 
+                                # start_date=form.start_date.data, 
+                                # end_date=form.end_date.data)
+                try:
+                    db.session.add(new_rental)
+                    db.session.commit()
+                    flash('The rental has been added!','success')
+                    return redirect('/rentals')
+
+                except:
+                    return 'There was an issue adding the rental'
+
+            else:
+                flash('customer does not exist')
+                return render_template('add-rental.html', form=form, film=film)
+                
+        #     else:
+        #         return render_template('add-rental.html', form=form)
+        # else:
+        #     return render_template('add-rental.html', form=form)
+    # else:
+        # flash('Customer does not exist! ')
+    return render_template('add-rental.html', form=form, film=film)
+
 @app.route('/customers', methods=['POST','GET'])
 def customer():
     if request.method == 'POST':
@@ -134,6 +180,25 @@ def customer():
     else:
         customers = Customer.query.all()
         return render_template('customers.html', customers=customers)
+
+@app.route("/customers/add", methods=['GET', 'POST'])
+def add_customer():
+    form = CustomerForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_customer = Customer(email=form.email.data, first_name=form.first_name.data, last_name=form.last_name.data)
+            try:
+                db.session.add(new_customer)
+                db.session.commit()
+                flash('The customer has been added!','success')
+                return redirect('/customers')
+
+            except:
+                return 'there was an issue adding the customer'
+        else:
+            return render_template('add-customer.html', form=form)
+    else:
+        return render_template('add-customer.html', form=form)
 
 @app.before_first_request
 def create_tables():

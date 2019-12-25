@@ -6,7 +6,14 @@
 
 {% block content %}
 <div class="container">
-    <h2>Customer List</h2>
+    <div class="row align-items-center">
+        <div class="col-8">
+            <h2>Customer List</h2>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-outline-info" href="/customers/add">Add a customer</a>
+        </div>
+    </div>
     <hr/>
     {% if customers|length < 1 %}
     <h4>Please add some customers first </h4>
@@ -36,7 +43,7 @@
         </tbody>
     </table>
     {% endif %}
-    <br/>
+    <!-- <br/>
     <h2>Add a new customer</h2>
     <div id="addcustomer">
         <form action="/customers" method="POST" >
@@ -46,6 +53,6 @@
             <input type="submit" value="Add ">
         </form>
     </div>
-    <br/>
+    <br/> -->
 </div>
 {% endblock%}
