@@ -19,6 +19,7 @@
                 <th>Rental ID</th>
                 <th>Customer</th>
                 <th>Film</th>
+                <th>Category</th>
                 <th>Start Date</th>
                 <th>Due Date</th>
                 <th>Price ($SEK)</th>
@@ -32,6 +33,7 @@
                     <td>{{ rental.id }}</td>
                     <td>{{ rental.cust_email }}</td>
                     <td>{{ rental.film_name }}</td>
+                    <td>{{ rental.film_category }}</td>
                     <td>{{ rental.start_date.date() }}</td>
                     <td>{{ rental.end_date.date() }}</td>
                     <td>{{ rental.price }}</td>
@@ -43,6 +45,6 @@
         </tbody>
     </table>
     {% endif %}
-    <hr>
+    <hr/>
 </div>
 {% endblock%}

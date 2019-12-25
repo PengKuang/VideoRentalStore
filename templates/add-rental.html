@@ -50,7 +50,7 @@
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ form.start_date(class="form-control form-control-lg") }}
+                            {{ form.start_date(class="form-control form-control-lg", type="date") }}
                         {% endif %}
                     </div>
 
@@ -75,4 +75,10 @@
             </form>
         </div>
 </div>
+
+<script>
+    if ( $('[type="date"]').prop('type') != 'date' ) {
+        $('[type="date"]').datepicker();
+    }
+</script>
 {% endblock%}

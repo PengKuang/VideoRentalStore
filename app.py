@@ -29,6 +29,7 @@ class Rental(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
     film_name = db.Column(db.String(100))
+    film_category = db.Column(db.String(20))
     cust_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     cust_email = db.Column(db.String(120))
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -134,21 +135,88 @@ def add_rental(id):
             customer = Customer.query.filter_by(email=cust_email).first()
     
             if customer:
-                new_rental = Rental(film_id=film.id,
-                                film_name=film.name,
-                                cust_id=customer.id,
-                                cust_email=customer.email) 
-                                # start_date=form.start_date.data, 
-                                # end_date=form.end_date.data)
-                try:
-                    db.session.add(new_rental)
-                    db.session.commit()
-                    flash('The rental has been added!','success')
-                    return redirect('/rentals')
+                if form.start_date.data > form.end_date.data:
+                    flash('The due date must be a day after the start date! ')
+                    return render_template('add-rental.html', form=form, film=film)
+                else:
+                    # y,m,d = form.start_date.data.split('-')
+                    # startdate = datetime.datetime(int(y), int(m), int(d))
+                    # y,m,d = form.end_date.data.split('-')
+                    # enddate = datetime.datetime(int(y), int(m), int(d))
 
-                except:
-                    return 'There was an issue adding the rental'
+                    # if film.category == 'New release':
+                    premium_price = 40
+                    basic_price = 30
+                    new_rental = Rental(film_id=film.id,
+                                    film_name=film.name,
+                                    film_category=film.category,
+                                    cust_id=customer.id,
+                                    cust_email=customer.email,
+                                    start_date=form.start_date.data, 
+                                    end_date=form.end_date.data)
+                    days = (form.end_date.data - form.start_date.data).days
 
+                    if film.category == 'new release':
+                            price = days * premium_price
+                            new_rental.price = price
+                            try:
+                                db.session.add(new_rental)
+                                db.session.commit()
+                                flash('The rental has been added!','success')
+                                return redirect('/rentals')
+
+                            except:
+                                return 'There was an issue adding the rental'
+
+                    elif film.category == 'regular film':
+                            if days <= 3:
+                                price = basic_price
+                                new_rental.price = price
+                                try:
+                                    db.session.add(new_rental)
+                                    db.session.commit()
+                                    flash('The rental has been added!','success')
+                                    return redirect('/rentals')
+
+                                except:
+                                    return 'There was an issue adding the rental'
+                            else:
+                                price = basic_price + (days - 3) * basic_price
+                                new_rental.price = price
+                                try:
+                                    db.session.add(new_rental)
+                                    db.session.commit()
+                                    flash('The rental has been added!','success')
+                                    return redirect('/rentals')
+
+                                except:
+                                    return 'There was an issue adding the rental'
+
+                    else:
+                        if days <= 5:
+                                price = basic_price
+                                new_rental.price = price
+                                try:
+                                    db.session.add(new_rental)
+                                    db.session.commit()
+                                    flash(f'The rental for {form.film_name.data} has been added!','success')
+                                    return redirect('/rentals')
+
+                                except:
+                                    return 'There was an issue adding the rental'
+                        else:
+                            price = basic_price + (days - 5) * basic_price
+                            new_rental.price = price
+                            
+                            try:
+                                db.session.add(new_rental)
+                                db.session.commit()
+                                flash(f'The rental for {form.film_name.data} has been added!','success')
+                                return redirect('/rentals')
+
+                            except:
+                                return 'There was an issue adding the rental'
+                    
             else:
                 flash('customer does not exist')
                 return render_template('add-rental.html', form=form, film=film)
