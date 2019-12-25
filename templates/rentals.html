@@ -6,7 +6,22 @@
 
 {% block content %}
 <div class="container">
-    <h2>Rental records</h2>
+    <div>
+        <h2>Rental records</h2>
+        <a class="btn btn-outline-warning" data-toggle="collapse" href="#pricetier" role="button" aria-expanded="false" aria-controls="pricetier">
+            View Prices
+        </a>
+        <div class="collapse" id="pricetier">
+            <div class="card card-body">
+                <p>Price tiers (premium: 40 SEK, basic: 30 SEK)</p>
+                <ul>
+                    <li>New release: premium, 40 SEK per day</li>
+                    <li>Regular film: basic, 30 SEK within 3 days, 30 SEK per day afterwards</li>
+                    <li>Old film: basic, 30 SEK within 5 days, 30 SEK per day afterwards</li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <hr/>
     {% if rentals|length < 1 %}
     <h4>No film has been rented out yet!</h4>
@@ -38,7 +53,32 @@
                     <td>{{ rental.end_date.date() }}</td>
                     <td>{{ rental.price }}</td>
                     <td>
-                        <a class="btn btn-outline-primary" href="/return/{{rental.id}}">Return</a>
+                        <!-- <a class="btn btn-outline-primary" href="/return/{{rental.id}}">Return</a> -->
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#returnModal">
+                            Return
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnmodal" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="returnrental">Return Rental</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                ...
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}

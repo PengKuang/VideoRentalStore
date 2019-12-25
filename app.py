@@ -3,6 +3,7 @@ from flask import render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from forms import CustomerForm, RentalForm
+from calculator import calculate_price, calculate_late_charge
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '229b845d2e364ca8a032e35c104f69b1'
@@ -193,29 +194,40 @@ def add_rental(id):
                                     return 'There was an issue adding the rental'
 
                     else:
-                        if days <= 5:
-                                price = basic_price
-                                new_rental.price = price
-                                try:
-                                    db.session.add(new_rental)
-                                    db.session.commit()
-                                    flash(f'The rental for {form.film_name.data} has been added!','success')
-                                    return redirect('/rentals')
 
-                                except:
-                                    return 'There was an issue adding the rental'
-                        else:
-                            price = basic_price + (days - 5) * basic_price
-                            new_rental.price = price
+                        price = calculate_price(days, 'old film')
+                        new_rental.price = price
+                        try:
+                            db.session.add(new_rental)
+                            db.session.commit()
+                            flash(f'The rental for {form.film_name.data} has been added!','success')
+                            return redirect('/rentals')
+
+                        except:
+                            return 'There was an issue adding the rental'
+                        # if days <= 5:
+                        #         price = basic_price
+                        #         new_rental.price = price
+                        #         try:
+                        #             db.session.add(new_rental)
+                        #             db.session.commit()
+                        #             flash(f'The rental for {form.film_name.data} has been added!','success')
+                        #             return redirect('/rentals')
+
+                        #         except:
+                        #             return 'There was an issue adding the rental'
+                        # else:
+                        #     price = basic_price + (days - 5) * basic_price
+                        #     new_rental.price = price
                             
-                            try:
-                                db.session.add(new_rental)
-                                db.session.commit()
-                                flash(f'The rental for {form.film_name.data} has been added!','success')
-                                return redirect('/rentals')
+                        #     try:
+                        #         db.session.add(new_rental)
+                        #         db.session.commit()
+                        #         flash(f'The rental for {form.film_name.data} has been added!','success')
+                        #         return redirect('/rentals')
 
-                            except:
-                                return 'There was an issue adding the rental'
+                        #     except:
+                        #         return 'There was an issue adding the rental'
                     
             else:
                 flash('customer does not exist')
