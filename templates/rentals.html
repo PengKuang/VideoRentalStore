@@ -53,14 +53,14 @@
                     <td>{{ rental.end_date.date() }}</td>
                     <td>{{ rental.price }}</td>
                     <td>
-                        <!-- <a class="btn btn-outline-primary" href="/return/{{rental.id}}">Return</a> -->
+                        <a class="btn btn-outline-primary" href="/rentals/return/{{rental.id}}">Return</a>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#returnModal">
+                        <!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#returnModal">
                             Return
-                        </button>
+                        </button> -->
 
                         <!-- Modal -->
-                        <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnmodal" aria-hidden="true">
+                        <!-- <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnmodal" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                             </div>
-                        </div>
+                        </div> -->
                     </td>
                 </tr>
             {% endfor %}

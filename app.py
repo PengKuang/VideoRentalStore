@@ -1,9 +1,9 @@
 from flask import Flask
 from flask import render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from forms import CustomerForm, RentalForm
-from calculator import calculate_price, calculate_late_charge
+from datetime import datetime, date
+from forms import CustomerForm, RentalForm, ReturnForm
+from calculator import calculate_price, calculate_late_charge, calculate_bonus_point
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '229b845d2e364ca8a032e35c104f69b1'
@@ -40,6 +40,24 @@ class Rental(db.Model):
     def __repr__(self):
         return '<Rental %r>' % self.id
 
+class Return(db.Model):
+    __tablename__ = "return"
+
+    id = db.Column(db.Integer, primary_key=True)
+    film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
+    film_name = db.Column(db.String(100))
+    film_category = db.Column(db.String(20))
+    cust_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    cust_email = db.Column(db.String(120))
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    return_date = db.Column(db.DateTime, default=datetime.utcnow)
+    overdue_days = db.Column(db.Integer, default=0)
+    late_charge = db.Column(db.Integer, default=0)
+    total_price = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return '<Return %r>' % self.id
+
 class Customer(db.Model):
     __tablename__ = "customer"
 
@@ -63,6 +81,7 @@ def index():
         try:
             db.session.add(new_film)
             db.session.commit()
+            # flash(f'The film {film_name} has been added!', 'success')
             return redirect('/')
 
         except:
@@ -140,12 +159,6 @@ def add_rental(id):
                     flash('The due date must be a day after the start date! ')
                     return render_template('add-rental.html', form=form, film=film)
                 else:
-                    # y,m,d = form.start_date.data.split('-')
-                    # startdate = datetime.datetime(int(y), int(m), int(d))
-                    # y,m,d = form.end_date.data.split('-')
-                    # enddate = datetime.datetime(int(y), int(m), int(d))
-
-                    # if film.category == 'New release':
                     premium_price = 40
                     basic_price = 30
                     new_rental = Rental(film_id=film.id,
@@ -163,38 +176,25 @@ def add_rental(id):
                             try:
                                 db.session.add(new_rental)
                                 db.session.commit()
-                                flash('The rental has been added!','success')
+                                flash(f'The rental for {form.film_name.data} has been added!','success')
                                 return redirect('/rentals')
 
                             except:
                                 return 'There was an issue adding the rental'
 
                     elif film.category == 'regular film':
-                            if days <= 3:
-                                price = basic_price
-                                new_rental.price = price
-                                try:
-                                    db.session.add(new_rental)
-                                    db.session.commit()
-                                    flash('The rental has been added!','success')
-                                    return redirect('/rentals')
+                        price = calculate_price(days, 'regular film')
+                        new_rental.price = price
+                        try:
+                            db.session.add(new_rental)
+                            db.session.commit()
+                            flash(f'The rental for {form.film_name.data} has been added!','success')
+                            return redirect('/rentals')
 
-                                except:
-                                    return 'There was an issue adding the rental'
-                            else:
-                                price = basic_price + (days - 3) * basic_price
-                                new_rental.price = price
-                                try:
-                                    db.session.add(new_rental)
-                                    db.session.commit()
-                                    flash('The rental has been added!','success')
-                                    return redirect('/rentals')
-
-                                except:
-                                    return 'There was an issue adding the rental'
+                        except:
+                            return 'There was an issue adding the rental'
 
                     else:
-
                         price = calculate_price(days, 'old film')
                         new_rental.price = price
                         try:
@@ -205,41 +205,84 @@ def add_rental(id):
 
                         except:
                             return 'There was an issue adding the rental'
-                        # if days <= 5:
-                        #         price = basic_price
-                        #         new_rental.price = price
-                        #         try:
-                        #             db.session.add(new_rental)
-                        #             db.session.commit()
-                        #             flash(f'The rental for {form.film_name.data} has been added!','success')
-                        #             return redirect('/rentals')
-
-                        #         except:
-                        #             return 'There was an issue adding the rental'
-                        # else:
-                        #     price = basic_price + (days - 5) * basic_price
-                        #     new_rental.price = price
-                            
-                        #     try:
-                        #         db.session.add(new_rental)
-                        #         db.session.commit()
-                        #         flash(f'The rental for {form.film_name.data} has been added!','success')
-                        #         return redirect('/rentals')
-
-                        #     except:
-                        #         return 'There was an issue adding the rental'
                     
             else:
                 flash('customer does not exist')
                 return render_template('add-rental.html', form=form, film=film)
-                
-        #     else:
-        #         return render_template('add-rental.html', form=form)
-        # else:
-        #     return render_template('add-rental.html', form=form)
-    # else:
-        # flash('Customer does not exist! ')
+        
     return render_template('add-rental.html', form=form, film=film)
+
+@app.route('/rentals/return/<int:id>', methods=['POST', 'GET'])
+def return_film(id):
+    rental = Rental.query.get_or_404(id)
+    form = ReturnForm()
+    form.film_name.data = rental.film_name
+    form.cust_email.data = rental.cust_email
+    form.start_date.data = rental.start_date
+    form.due_date.data = rental.end_date
+    form.return_date.data = date.today()
+
+    if request.method == 'POST':
+        if form.validate_on_submit:
+            days = rental.end_date.date() - rental.start_date.date()
+            overdue_days = (date.today() - rental.end_date.date()).days
+            new_return = Return(film_id=rental.film_id,
+                                    film_name=rental.film_name,
+                                    film_category=rental.film_category,
+                                    cust_id=rental.cust_id,
+                                    cust_email=rental.cust_email,
+                                    start_date=rental.start_date, 
+                                    return_date=date.today())
+            if overdue_days < 0:
+                days = (date.today() - rental.start_date.date()).days
+                total_price = calculate_price(days, rental.film_category)
+                new_return.overdue_days = 0
+                new_return.total_price = total_price
+                new_return.late_charge = 0
+                try:
+                    db.session.add(new_return)
+                    db.session.commit()
+                    flash(f'The return for {form.film_name.data} has been added!','success')
+                    return redirect('/rentals')
+
+                except:
+                    return 'There was an issue adding the return'
+            else:
+                days = (date.today() - rental.start_date.date()).days
+                # total_price = calculate_price(days, rental.film_category)
+                late_charge = calculate_late_charge(overdue_days, rental.film_category)
+                new_return.overdue_days = overdue_days
+                new_return.total_price = rental.price + late_charge
+                new_return.late_charge = late_charge
+                # form.days.data = days
+                # form.late_charge.data = late_charge
+                # form.total_price.data = rental.price + late_charge
+                try:
+                    db.session.add(new_return)
+                    db.session.commit()
+                    flash(f'The return for {form.film_name.data} has been added!','success')
+                    flash('Updating bonus points for the customer')
+                    customer = Customer.query.get_or_404(rental.cust_id)
+                    bpt = calculate_bonus_point(rental.film_category)
+                    customer.bonus_points += bpt
+                    db.session.commit()
+                    flash(f'The bonus point for {customer.first_name} {customer.last_name} has been added!','success')
+                    return redirect('/returns')
+
+                except:
+                    return 'There was an issue adding the return'
+
+            return redirect('/returns.html')
+
+    # days = (rental.end_date.date() - date.today()).days
+    # if request.method == 'POST'
+
+    return render_template('return-rental.html', form=form, rental=rental)    
+
+@app.route('/returns', methods=['GET'])
+def get_all_returns():
+    returns = Return.query.order_by(Return.return_date).all()
+    return render_template('returns.html', returns=returns)  
 
 @app.route('/customers', methods=['POST','GET'])
 def customer():
@@ -270,7 +313,7 @@ def add_customer():
             try:
                 db.session.add(new_customer)
                 db.session.commit()
-                flash('The customer has been added!','success')
+                flash(f'The customer {form.first_name.data} {form.last_name.data} has been added!','success')
                 return redirect('/customers')
 
             except:
