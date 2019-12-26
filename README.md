@@ -35,7 +35,7 @@ pip3 install -r requirements.txt
 Activate the environment
 
 ```bash
-source env/bint/activate
+source env/bin/activate
 ```
 
 Run the application
