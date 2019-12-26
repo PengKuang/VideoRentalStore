@@ -14,10 +14,9 @@ def index():
         new_film = Film(name=film_name, category=film_category)
 
         try:
-            # flash('adding a new film')
             db.session.add(new_film)
             db.session.commit()
-            flash(f'  The film {film_name} has been added!', 'success')
+            # flash(f'  The film {film_name} has been added!', 'success')
             return redirect('/')
 
         except Exception as e:
@@ -42,39 +41,23 @@ def delete(id):
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     film = Film.query.get_or_404(id)
+    oldname = film.name
+    old_category = film.category
 
     if request.method == 'POST':
         film.name = request.form['fname']
         film.category = request.form['fcategory']
         try:
             db.session.commit()
-            flash(f'  The film {film.name} has been updated!', 'success')
+            if oldname != film.name:
+                flash(f'The film {oldname} has been updated to {film.name}!', 'success')
+            else:
+                flash(f'The category of the film {oldname} is changed from {old_category} to {film.category}', 'success')
             return redirect('/')
         except:
             return 'there was an issue updating the film'
     else:
         return render_template('update.html', film=film)
-
-@app.route('/rent/<int:id>', methods=['GET', 'POST'])
-def rent(id):
-    film = Film.query.get_or_404(id)
-
-    if request.method == 'POST':
-        nfilm_name = film.name
-        ncust_id = request.form['customerid']
-        nstart_date = request.form['startdate']
-        nend_date = request.form['enddate']
-
-        new_rental = Rental(film_name=nfilm_name, cust_id=ncust_id, start_date=nstart_date, end_date=nend_date)
-
-        try:
-            db.session.add(new_rental)
-            db.session.commit()
-            return redirect('/rentals')
-        except:
-            return 'there was an issue adding the rental'
-    else:
-        return render_template('rent.html', film=film)
 
 @app.route('/rentals', methods=['GET'])
 def get_all_rentals():
@@ -94,7 +77,7 @@ def add_rental(id):
     
             if customer:
                 if form.start_date.data > form.end_date.data:
-                    flash('  The due date must be a day after the start date! ')
+                    flash('The due date must not be a day before the start date!', 'error')
                     return render_template('add-rental.html', form=form, film=film)
                 else:
                     premium_price = 40
@@ -107,6 +90,8 @@ def add_rental(id):
                                     start_date=form.start_date.data, 
                                     end_date=form.end_date.data)
                     days = (form.end_date.data - form.start_date.data).days
+                    if days == 0:
+                        days = 1
 
                     if film.category == 'new release':
                             price = days * premium_price
@@ -114,7 +99,16 @@ def add_rental(id):
                             try:
                                 db.session.add(new_rental)
                                 db.session.commit()
-                                flash(f'  The rental for {form.film_name.data} has been added!','success')
+                                # flash(f'  The rental for {form.film_name.data} has been added!','success')
+                                film.available = 0
+                                try:
+                                    db.session.commit()
+                                    flash(f'The film {film.name} is now rented out. It is not available anymore.', 'success')
+                                    return redirect('/rentals')
+                                
+                                except:
+                                    return 'Oops, the availablity of the film cannot be updated!'
+
                                 return redirect('/rentals')
 
                             except:
@@ -126,7 +120,7 @@ def add_rental(id):
                         try:
                             db.session.add(new_rental)
                             db.session.commit()
-                            flash(f'  The rental for {form.film_name.data} has been added!','success')
+                            # flash(f'  The rental for {form.film_name.data} has been added!','success')
                             return redirect('/rentals')
 
                         except:
@@ -138,14 +132,14 @@ def add_rental(id):
                         try:
                             db.session.add(new_rental)
                             db.session.commit()
-                            flash(f'  The rental for {form.film_name.data} has been added!','success')
+                            # flash(f'  The rental for {form.film_name.data} has been added!','success')
                             return redirect('/rentals')
 
                         except:
                             return 'There was an issue adding the rental'
                     
             else:
-                flash('customer does not exist')
+                flash('The customer does not exist. Please add the customer first!', 'error')
                 return render_template('add-rental.html', form=form, film=film)
         
     return render_template('add-rental.html', form=form, film=film)
@@ -153,6 +147,7 @@ def add_rental(id):
 @app.route('/rentals/return/<int:id>', methods=['POST', 'GET'])
 def return_film(id):
     rental = Rental.query.get_or_404(id)
+    film = Film.query.get_or_404(rental.film_id)
     form = ReturnForm()
     form.film_name.data = rental.film_name
     form.cust_email.data = rental.cust_email
@@ -162,6 +157,8 @@ def return_film(id):
 
     if request.method == 'POST':
         if form.validate_on_submit:
+            # return_date = form.return_date.data
+            # days = form.return_date.data - rental.start_date.date()
             days = rental.end_date.date() - rental.start_date.date()
             overdue_days = (date.today() - rental.end_date.date()).days
             new_return = Return(film_id=rental.film_id,
@@ -179,8 +176,15 @@ def return_film(id):
                 new_return.late_charge = 0
                 try:
                     db.session.add(new_return)
+                    rental.returned = 1
+                    film.available = 1
                     db.session.commit()
-                    flash(f'  The return for {form.film_name.data} has been added!','success')
+                    flash(f'The film {form.film_name.data} has been returned! This is an early return.','success')
+                    customer = Customer.query.get_or_404(rental.cust_id)
+                    bpt = calculate_bonus_point(rental.film_category)
+                    customer.bonus_points += bpt
+                    db.session.commit()
+                    flash(f'{bpt} bonus points has been added for customer {customer.first_name} {customer.last_name}!','success')
                     return redirect('/returns')
 
                 except:
@@ -193,14 +197,16 @@ def return_film(id):
                 new_return.late_charge = late_charge
                 try:
                     db.session.add(new_return)
+                    rental.returned = 1
+                    film.available = 1
                     db.session.commit()
-                    flash(f'  The return for {form.film_name.data} has been added!','success')
+                    flash(f'The film {form.film_name.data} has been returned to the inventory! Its rental record has been updated too!','success')
                     # flash('Updating bonus points for the customer')
                     customer = Customer.query.get_or_404(rental.cust_id)
                     bpt = calculate_bonus_point(rental.film_category)
                     customer.bonus_points += bpt
                     db.session.commit()
-                    flash(f'  The bonus point for {customer.first_name} {customer.last_name} has been added!','success')
+                    flash(f'{bpt} bonus points has been added for customer {customer.first_name} {customer.last_name}!','success')
                     return redirect('/returns')
 
                 except:
@@ -229,7 +235,7 @@ def customer():
             return redirect('/customers')
 
         except:
-            return 'there was an issue adding the customer'
+            return 'There was an issue adding the customer. The customer email may already exists!'
 
     else:
         customers = Customer.query.all()
@@ -244,7 +250,7 @@ def add_customer():
             try:
                 db.session.add(new_customer)
                 db.session.commit()
-                flash(f'  The customer {form.first_name.data} {form.last_name.data} has been added!','success')
+                # flash(f'  The customer {form.first_name.data} {form.last_name.data} has been added!','success')
                 return redirect('/customers')
 
             except:

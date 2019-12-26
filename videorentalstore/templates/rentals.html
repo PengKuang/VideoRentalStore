@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container">
     <div>
-        <h2>Rental records</h2>
+        <h2>Rental Records</h2>
         <a class="btn btn-outline-warning" data-toggle="collapse" href="#pricetier" role="button" aria-expanded="false" aria-controls="pricetier">
             View Prices
         </a>
@@ -25,7 +25,7 @@
     <hr/>
     {% if rentals|length < 1 %}
     <h4>No film has been rented out yet!</h4>
-    <h4>Please make a rental through the film catelog.</h4>
+    <h4>Please make a rental through the film catelog!</h4>
     <br>
     
     {% else %}
@@ -39,6 +39,7 @@
                 <th>Start Date</th>
                 <th>Due Date</th>
                 <th>Price ($SEK)</th>
+                <th>Returned</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -53,6 +54,7 @@
                     <td>{{ rental.start_date.date() }}</td>
                     <td>{{ rental.end_date.date() }}</td>
                     <td>{{ rental.price }}</td>
+                    <td>{{ "Yes" if rental.returned else "No" }}</td>
                     <td>
                         <a class="btn btn-outline-success" href="/rentals/return/{{rental.id}}">Return</a>
                     </td>

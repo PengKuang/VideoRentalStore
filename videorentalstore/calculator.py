@@ -1,5 +1,5 @@
 def calculate_price(days, category):
-    if days >= 1:
+    if days >= 0:
         premium_price = 40
         basic_price = 30
         price = 0
@@ -22,7 +22,7 @@ def calculate_price(days, category):
             price = premium_price * days
             return price
     else:
-        return "The days must be greater than and equal to 1"
+        return "The days must be greater than and equal to 0"
 
 def calculate_late_charge(overdue_days, category):
     premium_price = 40

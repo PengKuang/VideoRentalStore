@@ -27,6 +27,7 @@ class Rental(db.Model):
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
     end_date = db.Column(db.DateTime, default=datetime.utcnow)
     price = db.Column(db.Integer, default=30)
+    returned = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<Rental %r>' % self.id
