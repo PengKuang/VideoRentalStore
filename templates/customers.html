@@ -13,6 +13,20 @@
         <div class="col-2">
             <a class="btn btn-outline-info" href="/customers/add">Add a customer</a>
         </div>
+        
+    </div>
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-outline-info" data-toggle="collapse" href="#bonuspointinfo" role="button" aria-expanded="false" aria-controls="pricetier">
+                What is bonus point?
+            </a>
+            <div class="collapse" id="bonuspointinfo">
+                <div class="card card-body">
+                    <p>Customers get bonus points when renting films.</p>
+                    <p>A new release gives two points and other films give one point per rental (regardless of the time rented).</p>
+                </div>
+            </div>
+        </div>
     </div>
     <hr/>
     {% if customers|length < 1 %}

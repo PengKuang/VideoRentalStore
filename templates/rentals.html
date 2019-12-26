@@ -25,6 +25,7 @@
     <hr/>
     {% if rentals|length < 1 %}
     <h4>No film has been rented out yet!</h4>
+    <h4>Please make a rental through the film catelog.</h4>
     <br>
     
     {% else %}
@@ -53,32 +54,7 @@
                     <td>{{ rental.end_date.date() }}</td>
                     <td>{{ rental.price }}</td>
                     <td>
-                        <a class="btn btn-outline-primary" href="/rentals/return/{{rental.id}}">Return</a>
-                        <!-- Button trigger modal -->
-                        <!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#returnModal">
-                            Return
-                        </button> -->
-
-                        <!-- Modal -->
-                        <!-- <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnmodal" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h5 class="modal-title" id="returnrental">Return Rental</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                ...
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                            </div>
-                        </div> -->
+                        <a class="btn btn-outline-success" href="/rentals/return/{{rental.id}}">Return</a>
                     </td>
                 </tr>
             {% endfor %}

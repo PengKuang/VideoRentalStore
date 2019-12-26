@@ -7,9 +7,9 @@
         <div class="col-8">
             <h2>Film Catalog</h2>
         </div>
-        <div class="col-2">
-            <a class="btn btn-outline-primary" href="/films/add">Add a film</a>
-        </div>
+        <!-- <div class="col-2">
+            <a class="btn btn-outline-primary" href="#addfilmform">Add a film</a>
+        </div> -->
     </div>
     <hr/>
     {% if films|length < 1 %}
@@ -35,18 +35,17 @@
                     <td>{{ "Yes" if film.available else "No" }}</td>
                     <td>
                         <div class="row align-items-center">
-                            <div class="col-2">
-                                <a class="btn btn-outline-warning" href="/rent/{{film.id}}">Rent</a>
+                            <div class="col-1 mr-2">
+                                <a class="btn btn-outline-warning" href="/rentals/add/{{film.id}}">Rent</a>
                             </div>
-                            <div class="col-2">
-                                <a class="btn btn-outline-warning" href="/rentals/add/{{film.id}}">new rent</a>
-                            </div>
-                            <div class="col-2">
+                            <div class="col-2 ml-4">
                                 <a class="btn btn-outline-primary" href="/update/{{film.id}}">Update</a>
                             </div>
-                            <div class="col-2">
+                            <!-- <div class="col-1"></div> -->
+                            <div class="col-2 ml-2">
                                 <a class="btn btn-outline-danger" href="/delete/{{film.id}}">Delete</a>
                             </div>
+                            
                         </div>
                     </td>
                 </tr>
@@ -73,7 +72,7 @@
                     </select>
                 </div>
                 <br/>
-                <input class="btn btn-primary" type="submit" value="Add">
+                <input class="btn btn-primary" type="submit" value="Submit">
             </form>
         </div>
     </div>

@@ -8,29 +8,29 @@
 <div class="container">
     <div>
         <h2>Return Records</h2>
-        <a class="btn btn-outline-warning" data-toggle="collapse" href="#pricetier" role="button" aria-expanded="false" aria-controls="pricetier">
+        <a class="btn btn-outline-success" data-toggle="collapse" href="#latechargeinfo" role="button" aria-expanded="false" aria-controls="pricetier">
             Late charge policy
         </a>
-        <div class="collapse" id="pricetier">
+        <div class="collapse" id="latechargeinfo">
             <div class="card card-body">
-                <p>Price tiers (premium: 40 SEK, basic: 30 SEK)</p>
+                <p>Late charge applies to overdue returns: </p>
                 <ul>
-                    <li>New release: premium, 40 SEK per day</li>
-                    <li>Regular film: basic, 30 SEK within 3 days, 30 SEK per day afterwards</li>
-                    <li>Old film: basic, 30 SEK within 5 days, 30 SEK per day afterwards</li>
+                    <li>New release: 40 SEK per day for extradays</li>
+                    <li>Regular film: 30 SEK per day for extradays</li>
+                    <li>Old film: 30 SEK per day for extradays</li>
                 </ul>
             </div>
         </div>
     </div>
     <hr/>
     {% if returns|length < 1 %}
-    <h4>No film has been returned yet!</h4>
+    <h4>No film has been returned yet! Check out the rentals to return.</h4>
     <br>
     
     {% else %}
     <table class="table table-hover">
         <thead class="table-dark">
-            <tr class="bg-warning">
+            <tr class="bg-success">
                 <th>Return ID</th>
                 <th>Customer</th>
                 <th>Film</th>

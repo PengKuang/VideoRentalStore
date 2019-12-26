@@ -105,12 +105,14 @@ def delete(id):
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     film = Film.query.get_or_404(id)
+    oldname = film.name
 
     if request.method == 'POST':
         film.name = request.form['fname']
-
+        film.category = request.form['fcategory']
         try:
             db.session.commit()
+            flash(f'The film {oldname} has been updated!', 'success')
             return redirect('/')
         except:
             return 'there was an issue updating the film'
@@ -243,7 +245,7 @@ def return_film(id):
                     db.session.add(new_return)
                     db.session.commit()
                     flash(f'The return for {form.film_name.data} has been added!','success')
-                    return redirect('/rentals')
+                    return redirect('/returns')
 
                 except:
                     return 'There was an issue adding the return'
@@ -261,7 +263,7 @@ def return_film(id):
                     db.session.add(new_return)
                     db.session.commit()
                     flash(f'The return for {form.film_name.data} has been added!','success')
-                    flash('Updating bonus points for the customer')
+                    # flash('Updating bonus points for the customer')
                     customer = Customer.query.get_or_404(rental.cust_id)
                     bpt = calculate_bonus_point(rental.film_category)
                     customer.bonus_points += bpt

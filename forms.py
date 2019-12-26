@@ -10,7 +10,7 @@ class CustomerForm(FlaskForm):
                            validators=[DataRequired(), Length(min=1, max=50)])
     email = StringField('Email',
                         validators=[DataRequired(), Email(), Length(min=1, max=120)])
-    submit = SubmitField('Add')
+    submit = SubmitField('Submit')
 
 class RentalForm(FlaskForm):
     film_name = StringField('Film name',
@@ -21,7 +21,7 @@ class RentalForm(FlaskForm):
                         validators=[DataRequired()])
     end_date = DateField('End date', format='%Y-%m-%d', 
                         validators=[DataRequired()])
-    submit = SubmitField('Add')
+    submit = SubmitField('Submit')
 
 class ReturnForm(FlaskForm):
     film_name = StringField('Film name',

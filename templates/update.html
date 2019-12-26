@@ -6,13 +6,27 @@
 
 {% block content %}
 <div class="container">
-    <h1>Update Film</h1>
-
-    <div class="form">
-        <form action="/update/{{film.id}}" method="POST">
-            <input type="text" name="fname" value="{{film.name}}"/>
-            <input type="submit" value="Update">
-        </form>
+    <div class="row justify-content-center">
+        <div id="addfilmform" class="col-6">
+            <h3>Update the film</h3>
+            <hr/>
+            <form action="/update/{{film.id}}" method="POST" >
+                <div class="form-group">
+                    <label for="film_name">Film name</label>
+                    <input type="text" class="form-control" name="fname" id="film_name" value="{{film.name}}">
+                </div>
+                <div>
+                    <label for="categoryInput">Category</label>
+                    <select class="custom-select" name="fcategory" id="categoryInput">
+                        <option selected value="new release">New release</option>
+                        <option value="regular film">Regular film</option>
+                        <option value="old film">Old film</option>
+                    </select>
+                </div>
+                <br/>
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </form>
+        </div>
     </div>
 </div>
 {% endblock%}
