@@ -52,7 +52,7 @@ def update(id):
             if oldname != film.name:
                 flash(f'The film {oldname} has been updated to {film.name}!', 'success')
             else:
-                flash(f'The category of the film {oldname} is changed from {old_category} to {film.category}', 'success')
+                flash(f'The category of {oldname} has been changed from {old_category} to {film.category} !', 'success')
             return redirect('/')
         except:
             return 'there was an issue updating the film'
@@ -184,7 +184,7 @@ def return_film(id):
                     bpt = calculate_bonus_point(rental.film_category)
                     customer.bonus_points += bpt
                     db.session.commit()
-                    flash(f'{bpt} bonus points has been added for customer {customer.first_name} {customer.last_name}!','success')
+                    flash(f'{bpt} bonus points for customer {customer.first_name} {customer.last_name} has been added!','success')
                     return redirect('/returns')
 
                 except:
