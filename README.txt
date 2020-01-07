@@ -60,6 +60,8 @@ There are some known issues with the production version on Heroku. For example, 
 
 The author only did minimum deployment work for the production version. So bugs akin to the live environment are not addressed due to shortage of time and lack of knowledge of the environment. 
 
+If you prefer to test the application on Heroku, please keep refreshing the page until you get the correct data displayed when encounting any data incomplete or incorrect issues.
+
 ## Message from the Developer
 
 This web application is developed using Python Flask framework, SQLAlchemy, WTForms and Bootstrap. I used Flask for the whole structure, SQLAlchemy for database, WTForms for form input and validation, and Bootstrap for UI. There are a few other flask extensions utilised.
