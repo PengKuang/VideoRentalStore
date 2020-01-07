@@ -50,10 +50,15 @@ http://127.0.0.1:5000/
 ## Test
 Please use the browser CHROME on desktop/laptop for testing the application. There are a few known issues on Safari, including date picker will not function, navbar responsiveness, etc. 
 
+Using localhost for testing is also recommended. There are some latency issues for displaying updated data instantly and correctly on Heroku.
+
 ## Deployment
 The app is also deployed to Heroku:
 https://flaskcrudapp2020.herokuapp.com/ 
 
+There are some known issues with the production version on Heroku. For example, the film catalogue will not display completely and correctly after adding a new film. This issue cannot be replicated on localhost. It mainly due to the environment itself, such as its network speed and database communication.
+
+The author only did minimum deployment work for the production version. So bugs akin to the live environment are not addressed due to shortage of time and lack of knowledge of the environment. 
 
 ## Message from the Developer
 

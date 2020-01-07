@@ -17,7 +17,9 @@ def index():
             db.session.add(new_film)
             db.session.commit()
             # flash(f'  The film {film_name} has been added!', 'success')
-            return redirect('/')
+            films = Film.query.all()
+            return render_template('index.html', films=films)
+            # return redirect('/')
 
         except Exception as e:
             traceback.print_exc()
@@ -247,14 +249,19 @@ def add_customer():
     if request.method == 'POST':
         if form.validate_on_submit():
             new_customer = Customer(email=form.email.data, first_name=form.first_name.data, last_name=form.last_name.data)
-            try:
-                db.session.add(new_customer)
-                db.session.commit()
-                # flash(f'  The customer {form.first_name.data} {form.last_name.data} has been added!','success')
-                return redirect('/customers')
-
-            except:
-                return 'there was an issue adding the customer'
+            cust_email = form.email.data
+            customer = Customer.query.filter_by(email=cust_email).first()
+            if (customer):
+                flash(f'The email {cust_email} is already in use by an existing customer! Please consider another one.', 'error')
+                return render_template('add-customer.html', form=form)
+            else:
+                try:
+                    db.session.add(new_customer)
+                    db.session.commit()
+                    # flash(f'  The customer {form.first_name.data} {form.last_name.data} has been added!','success')
+                    return redirect('/customers')
+                except:
+                    return 'There was an issue adding the customer.'
         else:
             return render_template('add-customer.html', form=form)
     else:
