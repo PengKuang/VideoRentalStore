@@ -4,7 +4,7 @@
 ## Email: kap.kuang@gmail.com
 
 Video Rental Store (VRS) is a system for VRS owners to manage their film inventory and rental and return records from their customers.
-VRS includes four main futures: film catalogue, customer list, film rental and film return.
+VRS includes four main features: film catalogue, customer list, film rental and film return.
 
 ## Usage
 To use the system for the first time, you will need to follow the steps below:
